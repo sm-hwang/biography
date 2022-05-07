@@ -3,3 +3,5 @@ pages/
 ideas.txt
 converter/
 json/
+.DS_Store
+**/Open_Sans/

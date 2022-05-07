@@ -1,0 +1,20 @@
+* {
+  margin: 0;  
+  font-family: sans-serif;
+}
+
+:root {
+  --b: #0c0c0c;
+  --f: #ffffff;
+  --m: #797979;
+  box-sizing: border-box;
+}
+
+body {
+  max-width: 1000px;
+  padding: 0px 20px;
+  margin: 0 auto;
+  background-color: var(--b);
+  color: var(--f);
+}
+
