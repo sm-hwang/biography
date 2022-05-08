@@ -1,5 +1,5 @@
 # TODO: need to eventually remove json dependency
-import os, json
+import os, json, re
 from datetime import datetime
 
 DELIM = "\n\n"
@@ -76,6 +76,10 @@ HOME = '''
 </body>
 '''
 
+LINK = '''
+<a href="{link}">{text}</a>
+'''
+
 ESSAY = '''
 <li><span class="date">{date}</span><a href="{link}">{title}</a></li>
 '''
@@ -88,22 +92,64 @@ PROJECT = '''
 projects = []
 essays = []
 
-# TODO: Escape all reserved chars e.g. >, <, &, "
+def merge(*iterators):
+  empty = {}
+  for values in itertools.zip_longest(*iterators, fillvalue=empty):
+    for value in values:
+      if value is not empty:
+        yield value
 
+# TODO: Escape all reserved chars e.g. >, <, &, "
 def isRunic(fn):
     return fn[-len(FILETYPE):] == FILETYPE
 
+def checkLink(text):
+    if '[' not in text: 
+        return text
+
+    matches = re.finditer('\[(?P<text>.*?)\]\[(?P<link>.*?)\]', text)
+    result = []
+    curr = 0
+    for m in matches:
+        result.append(text[curr:m.start()])
+        result.append(LINK.format(text= m.group('text'), link= m.group('link')))
+        curr = m.end()
+
+    return ''.join(result)
+
+def processParagraph(b):
+
+    temp = b.split('`')
+    if len(temp) % 2 == 0:
+        raise Exception("Missing matching inline code!")
+
+    result = []
+    for i in range(len(temp)):
+        if i % 2:
+            result.append(f'<code>{temp[i]}</code>')
+        else:
+            result.append(checkLink(temp[i]))
+
+    return "".join(result)
+
+IMAGE = '''
+<picture>
+    <img src={}>
+</picture>
+'''
+
 def htmlify(t, b):
-    # print(t, b)
     block = ""
     if t == "&":
-        block = PARAGRAPH.format(b)
+        block = PARAGRAPH.format(processParagraph(b))
     elif t == ">":
         block = BLOCKQUOTE.format(b)
     elif t == "#":
         block = HEADER.format(b)
     elif t == "!":
         block = BLOCK_CODE.format(b)
+    elif t == "|":
+        block = IMAGE.format(b)
     elif t == "%":
         pass
     else: # throw a fit 
@@ -140,7 +186,6 @@ def home():
     allpages = projects + essays
     allpages.sort(key=lambda x: x[START])
     pagesList = []
-
 
     for a in allpages:
         element = ""
