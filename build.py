@@ -54,7 +54,7 @@ PIECE = '''
 PORTFOLIO = '''
 <head>
     <title>Portfolio</title>
-    <link rel="stylesheet" href="styles1.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     {body}
@@ -77,11 +77,11 @@ HOME = '''
 '''
 
 ESSAY = '''
-<li><span class="date">{date}</span><span class="title">{title}</span></li>
+<li><span class="date">{date}</span><a href="{link}">{title}</a></li>
 '''
 
 PROJECT = '''
-<li><span class="date">{date}</span><span class="title">{title}</span><span class="description">{desc}</span></li>
+<li><span class="date">{date}</span><a href="{link}">{title}</a><span class="description">{desc}</span></li>
 '''
 
 # TODO: CHANGE SO NO GLOBAL VARS
@@ -111,11 +111,8 @@ def htmlify(t, b):
     return block
 
 def readMeta(b, fn):
-    print("print meta")
-    print(b)
     temp = json.loads(b)
-    temp[START] = datetime.strptime(temp[START], "%Y-%m-%d")
-    print(temp)
+    temp[START] = datetime.strptime(temp[START], '%Y-%m-%d')
     temp["filename"] = fn
     if temp["type"] == "p":
         projects.append(temp)
@@ -136,37 +133,37 @@ def portfolio():
             desc=p['description'])) 
 
     with open(GALLERY_PATH, 'w') as f:
-        print("Gallery")
-        print(PORTFOLIO.format(body="\n".join(gallery)))
         f.write(PORTFOLIO.format(body="\n".join(gallery)))
 
+# TODO: replace with constants
 def home():
     allpages = projects + essays
     allpages.sort(key=lambda x: x[START])
     pagesList = []
 
+
     for a in allpages:
         element = ""
+        timeStr = a[START].strftime('%Y %b %d - ')
         if a['type'] == 'p':
             element = PROJECT.format(
-                    date=a[START],
-                    title=a['title'], 
-                    desc=a['description']
+                    date=timeStr,
+                    title=a[TITLE], 
+                    link='./' + a['filename'],
+                    desc=", " + a['description']
                     )
         else:
             element = ESSAY.format(
-                    date=a[START],
-                    title=a['title'])
+                    date=timeStr,
+                    link='./' + a['filename'],
+                    title=a[TITLE])
         pagesList.append(element)
     HOME.format(elements='\n'.join(pagesList))
 
     with open(HOME_PATH, 'w') as f:
-        print("Home")
-        print(HOME.format(elements='\n'.join(pagesList)))
         f.write(HOME.format(elements='\n'.join(pagesList)))
 
 def parse(fn):
-    print(f'{RUNIC_DIRECTORY}/{fn}{FILETYPE}')
     content = []
     with open(f'{RUNIC_DIRECTORY}/{fn}{FILETYPE}', 'r') as f:
         rawContent = iter(map(lambda x: x.strip(), f.read().split(DELIM)))
@@ -185,8 +182,6 @@ def parse(fn):
 def writeHtml(p,c):
     fn = p + ".html"
     with open(f'{PAGES_DIRECTORY}/{fn}', 'w') as f:
-        print(f"{fn}")
-        print(c)
         f.write(c)
     
 
@@ -195,9 +190,6 @@ def main():
     pages = list(p[:-len(FILETYPE)] for p in filter(isRunic, os.listdir(RUNIC_DIRECTORY)))
     for p, c in zip(pages, map(parse, pages)):
         writeHtml(p,c)
-    print("global")
-    print(projects)
-    print(essays)
 
     portfolio()
     home() 
