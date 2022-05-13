@@ -26,13 +26,7 @@ PARAGRAPH = """<p>
     {}
 </p>"""
 
-BLOCK_CODE = """
-<pre>
-    <code>
-        {}
-    </code>
-</pre>
-"""
+BLOCK_CODE = """<pre><code>{}</code></pre>"""
 
 PIECE = '''
 <div class="piece">
