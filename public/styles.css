@@ -12,10 +12,19 @@
   --m: #777777;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --b: #ffffff;
+    --f: #161616;
+    --a: #3498db;
+    --h: #78b1f3; /* hover */
+    --m: #777777;
+  }
+}
+
 body {
   padding: 3.5em 1em;
   font-family: Inter, Helvetica, Roboto, sans-serif;
-
   font-size: 1rem;
   color: var(--f);
   background-color: var(--b);
@@ -42,7 +51,8 @@ ul {
 li {
   display: flex;
   justify-content: space-between;
-  /* margin-bottom: 8px; */
+  line-height: 1.5em;
+  margin-bottom: 0.5em;
 }
 
 a {
@@ -68,7 +78,6 @@ a:hover {
   body { padding: 3.5em 2em; }
 }
 
-/* FOR POSTS */
 
 p code {
   font-size: 0.85rem;
@@ -96,4 +105,3 @@ picture img {
   width: 100%;
   margin-bottom: 2em;
 }
-
