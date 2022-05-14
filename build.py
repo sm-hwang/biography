@@ -19,6 +19,8 @@ HTML = """
   <meta name="author" content="smh">
   <title>{title}</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="16x16.ico" type"image/ico" sizes="16x16">
+  <link rel="icon" href="32x32.ico" type"image/ico" sizes="16x16">
 </head>
 <body>
   <main>
