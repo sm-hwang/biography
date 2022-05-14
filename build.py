@@ -4,7 +4,7 @@ from datetime import datetime
 
 DELIM = "\n\n"
 RUNIC_DIRECTORY = "./pages"
-PAGES_DIRECTORY = "./test"
+PAGES_DIRECTORY = "./public"
 FILETYPE = ".runic"
 
 TITLE = "title"
@@ -198,13 +198,13 @@ def home():
             element = PROJECT.format(
                     date=timeStr,
                     title=a[TITLE], 
-                    link=f"https://smh.bio/{a['filename']}.html",
+                    link=f"{a['filename']}.html",
                     desc=", " + a['description']
                     )
         else:
             element = ESSAY.format(
                     date=timeStr,
-                    link='./' + a['filename'],
+                    link= f"{a['filename']}.html",
                     title=a[TITLE])
         pagesList.append(element)
 
