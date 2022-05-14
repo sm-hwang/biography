@@ -11,7 +11,12 @@ TITLE = "title"
 START = "start"
 
 HTML = """
+<!DOCTYPE html>
+<html lang="en">
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="smh">
   <title>{title}</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -20,6 +25,7 @@ HTML = """
 {content}
   </main>
 </body>
+</html>
 """
 
 GALLERY_PATH = "./public/gallery/index.html"
@@ -137,9 +143,12 @@ def processParagraph(b):
     return "".join(result)
 
 IMAGE = '''
+<figure>
 <picture>
-    <img src={}>
+<img src={}>
 </picture>
+<figcaption></figcaption
+</figure>
 '''
 
 def htmlify(t, b):
