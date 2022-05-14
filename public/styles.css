@@ -5,22 +5,15 @@
 }
 
 :root {
-  /* --b: #f8f8f8; */
   --b: #ffffff;
   --f: #161616;
-  /* --a: #ff6961; */
   --a: #3498db;
   --h: #78b1f3; /* hover */
-  /* --a: #D47968; */
-  /* --a: #ed933e; */
   --m: #777777;
 }
 
 body {
-  padding-top: 3.5em; 
-  padding-bottom: 3.5em;
-  /* padding: 50px; */
-  /* font-family: Fira Sans, sans-serif; */
+  padding: 3.5em 1em;
   font-family: Inter, Helvetica, Roboto, sans-serif;
 
   font-size: 1rem;
@@ -41,16 +34,6 @@ blockquote {
   padding-left: 1em;
   margin-bottom: 1em;
 }
-
-/* @media only screen and (min-width: 760px) { */
-/*   body { */
-/*     width: 55em; */
-/*   } */
-/* } */
-
-/* main { */
-/*   max-width: 650px */ 
-/* } */
 
 ul {
   list-style-type: none;
@@ -75,10 +58,15 @@ a:hover {
   font-family: monospace;
 }
 
-.desc {
+
+.description {
   color: rgba(121, 121, 121, 0.75);
 }
 
+@media only screen and (max-width: 700px) {
+  .date { display: none; }
+  body { padding: 3.5em 2em; }
+}
 
 /* FOR POSTS */
 

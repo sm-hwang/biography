@@ -3,12 +3,24 @@ import os, json, re
 from datetime import datetime
 
 DELIM = "\n\n"
-RUNIC_DIRECTORY = "."
-PAGES_DIRECTORY = "."
+RUNIC_DIRECTORY = "./pages"
+PAGES_DIRECTORY = "./test"
 FILETYPE = ".runic"
 
 TITLE = "title"
 START = "start"
+
+HTML = """
+<head>
+  <title>{title}</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+{content}
+  </main>
+</body>
+"""
 
 GALLERY_PATH = "./public/gallery/index.html"
 HOME_PATH = "./public/index.html"
@@ -58,12 +70,9 @@ PORTFOLIO = '''
 HOME = '''
 <head>
   <title>smh.bio</title>
-  <link rel="stylesheet" href="home.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <p> 
-    I dream of a world where the right thing to do is the easy thing to do.
-  </p>  
   <ul>
     {elements}
   </ul>
@@ -75,11 +84,11 @@ LINK = '''
 '''
 
 ESSAY = '''
-<li><span class="date">{date}</span><a href="{link}">{title}</a></li>
+<li><a href="{link}">{title}</a><span class="date">{date}</span></li>
 '''
 
 PROJECT = '''
-<li><span class="date">{date}</span><a href="{link}">{title}</a><span class="description">{desc}</span></li>
+<li><span><a href="{link}">{title}</a><span class="description">{desc}</span></span><span class="date">{date}</span></li>
 '''
 
 # TODO: CHANGE SO NO GLOBAL VARS
@@ -108,6 +117,7 @@ def checkLink(text):
         result.append(text[curr:m.start()])
         result.append(LINK.format(text= m.group('text'), link= m.group('link')))
         curr = m.end()
+    result.append(text[curr:])
 
     return ''.join(result)
 
@@ -164,7 +174,7 @@ def readMeta(b, fn):
 # Need to map projects to image, title, description
 # standardize logo picture format 
 def portfolio():
-    projects.sort(key=lambda x: x[START]) 
+    projects.sort(key=lambda x: x[START], reverse=True) 
     gallery = []
     for p in projects:
         gallery.append(PIECE.format(
@@ -178,17 +188,17 @@ def portfolio():
 # TODO: replace with constants
 def home():
     allpages = projects + essays
-    allpages.sort(key=lambda x: x[START])
+    allpages.sort(key=lambda x: x[START], reverse=True)
     pagesList = []
 
     for a in allpages:
         element = ""
-        timeStr = a[START].strftime('%Y %b %d - ')
+        timeStr = a[START].strftime('%b %d, %Y')
         if a['type'] == 'p':
             element = PROJECT.format(
                     date=timeStr,
                     title=a[TITLE], 
-                    link='./' + a['filename'],
+                    link=f"https://smh.bio/{a['filename']}.html",
                     desc=", " + a['description']
                     )
         else:
@@ -197,7 +207,6 @@ def home():
                     link='./' + a['filename'],
                     title=a[TITLE])
         pagesList.append(element)
-    HOME.format(elements='\n'.join(pagesList))
 
     with open(HOME_PATH, 'w') as f:
         f.write(HOME.format(elements='\n'.join(pagesList)))
@@ -209,14 +218,15 @@ def parse(fn):
         meta = next(rawContent)
 
         readMeta(meta, fn)     
+        rawContent = list(rawContent)
 
         for block in rawContent:
             if not block:
                 continue
-             
             # check type, remove rune 
             content.append(htmlify(block[0], block[1:].replace("\n"," ").strip()))        
-    return DELIM.join(content)
+
+    return HTML.format(title=fn, content=DELIM.join(content))
 
 def writeHtml(p,c):
     fn = p + ".html"
@@ -230,7 +240,8 @@ def main():
     for p, c in zip(pages, map(parse, pages)):
         writeHtml(p,c)
 
-    portfolio()
+    # for later
+    # portfolio()
     home() 
     print("Finished!")
 
