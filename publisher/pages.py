@@ -1,6 +1,10 @@
 import re, json
+from datetime import datetime
+from fileio import readRunic, writeHtml
 
-DELIM = '\n'
+
+FILETYPE = '.runic'
+DELIM = '\n\n'
 
 TITLE = 'title'
 START = 'start'
@@ -8,6 +12,7 @@ TYPE = 'type'
 DESC = 'description'
 KEYS = [TITLE, START, TYPE, DESC]
         
+# Do <meta name="description" content="">
 HTML = """
 <!DOCTYPE html>
 <html lang="en">
@@ -34,7 +39,9 @@ BLOCKQUOTE = '<blockquote><p>{}</p></blockquote>'
 
 PARAGRAPH = '<p>{}</p>'
 
-BLOCK_CODE = 'pre><code>{}</code></pre'
+BLOCK_CODE = '<pre><code>{}</code></pre>'
+
+CODE = '<code>{}</code>'
 
 LINK = '<a href="{link}">{text}</a>'
 
@@ -44,11 +51,6 @@ PROJECT = '''
 <li><span><a href="{link}">{title}</a><span class="description">{desc}</span></span><span class="date">{date}</span></li>
 '''
 
-def readMeta(first):
-    meta = json.loads(first)
-    validateMeta(meta)
-    meta[START] = datetime.strptime(meta[START], '%Y-%m-%d')
-    return meta
 
 def validateMeta(meta):
     notin = []
@@ -56,7 +58,30 @@ def validateMeta(meta):
         if k not in meta:
             notin.append(f'"{k}"')
     if notin:
-        raise Exception(*notin)
+        raise ValueError('Keys {", ".join(notin)} not found in meta-data')
+
+
+def readMeta(first):
+    meta = json.loads(first)
+    validateMeta(meta)
+    meta[START] = datetime.strptime(meta[START], '%Y-%m-%d')
+    return meta
+
+
+def checkLink(text):
+    if '[' not in text: 
+        return text
+
+    matches = re.finditer('\[(?P<text>.*?)\]\[(?P<link>.*?)\]', text)
+    result = []
+    curr = 0
+    for m in matches:
+        result.append(text[curr:m.start()])
+        result.append(LINK.format(text= m.group('text'), link= m.group('link')))
+        curr = m.end()
+    result.append(text[curr:])
+
+    return ''.join(result)
 
 
 def processParagraph(b):
@@ -68,32 +93,52 @@ def processParagraph(b):
     result = []
     for i in range(len(temp)):
         if i % 2:
-            result.append(f'<code>{temp[i]}</code>')
+            result.append(CODE.format(temp[i]))
         else:
             result.append(checkLink(temp[i]))
 
     return "".join(result)
 
 
-def parseBlock(block):
+def parseBlock(rune, block):
 
     block = block.replace('\n', ' ').strip()
     text = ''
-    if t == "&":
-        text = PARAGRAPH.format(processParagraph(b))
-    elif t == ">":
-        text = BLOCKQUOTE.format(b)
-    elif t == "#":
-        text = HEADER.format(b)
-    elif t == "!":
-        text = BLOCK_CODE.format(b)
-    elif t == "|":
-        text = IMAGE.format(b)
-    elif t == "%":
+    if rune == "&":
+        text = PARAGRAPH.format(processParagraph(block))
+    elif rune == ">":
+        text = BLOCKQUOTE.format(block)
+    elif rune == "#":
+        text = HEADER.format(block)
+    elif rune == "!":
+        text = BLOCK_CODE.format(block)
+    elif rune == "|":
+        text = IMAGE.format(block)
+    elif rune == "%":
         pass
-    else: # throw a fit 
-        raise ValueError('Unrecognized rune "{ve}"')
+    else:  
+        raise ValueError(f'Unrecognized rune "{rune}"')
     return text
+
+
+def runicToPages(runics):
+    pages = []
+    for r in runics:
+        pn, pc = r
+        try: 
+            first, other = pc.split(DELIM, 1)
+            meta = readMeta(first)
+            pages.append((pn, htmlify(pn, meta, other), meta))
+            # print("printing page")
+            # print(pn)
+            # print(htmlify(pn, meta, other))
+        except json.decoder.JSONDecodeError: 
+            print(f'Failed to read meta-data of {pn}{FILETYPE}')
+        except ValueError as ve:
+            print(f'{ve} in {pn}{FILETYPE}')
+
+    return pages
+
 
 def htmlify(pn, meta, pc):
 
@@ -102,10 +147,60 @@ def htmlify(pn, meta, pc):
     for block in blocks:
         if not block:
             continue
+        rune, rest = block[0], block[1:]
+        try:
+            content.append(parseBlock(rune, rest))
+        except ValueError as ve:
+            print(ve)
 
-        content.append(parseBlock(block))
+    return HTML.format(title= pn, content= '\n'.join(content))
 
-    return HTML.format(title= pn, content= DELIM.join(content))
+HOME_TITLE = 'smh'
+UL = '''
+<ul>
+{elements}    
+</ul>
+'''
+
+
+def getDate(p):
+    _, __, meta = p
+    return meta[START]
+
+
+def home(pages):
+    pages.sort(key=getDate, reverse=True)
+    toc = []
+    for p in pages:
+        name, content, meta = p
+        time = meta[START].strftime('%b %d, %Y')
+        if meta['type'] == 'p':
+            element = PROJECT.format(
+                    date=time,
+                    title=meta[TITLE], 
+                    link=f"{name}.html",
+                    desc=", " + meta['description'])
+        else:
+            element = ESSAY.format(
+                    date=time,
+                    link= f"{name}.html",
+                    title=meta[TITLE])
+        toc.append(element)
+    home = UL.format(elements='\n'.join(toc))
+
+    return HTML.format(title= HOME_TITLE, content= home)
+
+INDEX = 'index'
+
+# writeHtml, takes [(pagename, html content)]
+def printBio(runicNames):
+    runic = readRunic(runicNames)
+    pages = runicToPages(runic)
+    content = home(pages)
+    pages = [(pn, pc) for (pn, pc, _) in pages]
+    pages.append((INDEX, content))
+    writeHtml(pages) 
+    
 
 # PIECE = '''
 # <div class="piece">
@@ -122,4 +217,13 @@ def htmlify(pn, meta, pc):
 #     <!-- <div class="brush"><div> -->
 #     </div>
 # </div>
+# '''
+
+# IMAGE = '''
+# <figure>
+# <picture>
+# <img src={}>
+# </picture>
+# <figcaption></figcaption
+# </figure>
 # '''

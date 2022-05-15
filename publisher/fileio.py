@@ -1,16 +1,18 @@
 import os
 
-RUNIC_DIRECTORY = "./pages"
+
+RUNIC_DIRECTORY = "../pages"
 FILETYPE = ".runic"
-PAGES_DIRECTORY = "./public"
+PAGES_DIRECTORY = "../public"
 
 
 def isRunic(fn):
     return fn[-len(FILETYPE):] == FILETYPE
 
+
 def readRunic(pages):
     if not pages:
-        pages = p[:-len(FILETYPE)] for p in filter(isRunic, os.listdir(RUNIC_DIRECTORY))
+        pages = (p[:-len(FILETYPE)] for p in filter(isRunic, os.listdir(RUNIC_DIRECTORY)))
     runic = []
     for pn in pages:
         try: 
@@ -18,7 +20,9 @@ def readRunic(pages):
             runic.append((pn, pc))
         except: 
             print(f'Failed to read "{pn}{FILETYPE}"')
+
     return runic
+
 
 def readRunicFile(pn):
     rawContent = ''
@@ -26,15 +30,10 @@ def readRunicFile(pn):
         rawContent = f.read()
     return rawContent
 
-def writeHtml():
-    try:
-        pass
-    except:
-        pass
 
-def writeHtmlFile(p, c):
-    fn = p + ".html"
-    with open(f'{PAGES_DIRECTORY}/{fn}', 'w') as f:
-        f.write(c)
+def writeHtml(toWrite):
+    for (p, c) in toWrite:
+        fn = p + ".html"
+        with open(f'{PAGES_DIRECTORY}/{fn}', 'w') as f:
+            f.write(c)
 
-# should constructors throw exceptions?
