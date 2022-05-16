@@ -33,6 +33,8 @@ HTML = """
 </html>
 """
 
+IMAGE = '<picture><img src={src}></picture>'
+
 HEADER = '<h2>{}</h2>'
 
 BLOCKQUOTE = '<blockquote><p>{}</p></blockquote>'
@@ -113,7 +115,7 @@ def parseBlock(rune, block):
     elif rune == "!":
         text = BLOCK_CODE.format(block)
     elif rune == "|":
-        text = IMAGE.format(block)
+        text = IMAGE.format(src=f'images/{block}')
     elif rune == "%":
         pass
     else:  
@@ -219,11 +221,3 @@ def printBio(runicNames):
 # </div>
 # '''
 
-# IMAGE = '''
-# <figure>
-# <picture>
-# <img src={}>
-# </picture>
-# <figcaption></figcaption
-# </figure>
-# '''

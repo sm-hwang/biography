@@ -28,7 +28,6 @@ def main():
                 os.remove(path)
             except OSError:
                 print(f'Could not burn {file}')
-    # elif inst == PUBLISH:  # git add, commit and push only the 'public' directory
 
 
 main()
