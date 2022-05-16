@@ -1,4 +1,3 @@
-node_modules/
 pages/
 ideas.txt
 converter/
@@ -6,3 +5,5 @@ json/
 .DS_Store
 **/Open_Sans/
 test/
+todo.txt
+public/gallery/
