@@ -1,6 +1,6 @@
 import re, json
 from datetime import datetime
-from fileio import readRunic, writeHtml
+from publisher.fileio import readRunic, writeHtml
 
 
 FILETYPE = '.runic'
@@ -53,14 +53,14 @@ PROJECT = '''
 <li><span><a href="{link}">{title}</a><span class="description">{desc}</span></span><span class="date">{date}</span></li>
 '''
 
-
 def validateMeta(meta):
     notin = []
     for k in KEYS:
         if k not in meta:
             notin.append(f'"{k}"')
     if notin:
-        raise ValueError('Keys {", ".join(notin)} not found in meta-data')
+        plural = "s" if len(notin) > 1 else ""
+        raise ValueError('Key{plural} {", ".join(notin)} not found in meta-data')
 
 
 def readMeta(first):

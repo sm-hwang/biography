@@ -16,21 +16,21 @@
   :root {
     --b: #ffffff;
     --f: #161616;
-    --a: #3498db;
+    --a: #007fff;
     --h: #78b1f3; /* hover */
     --m: #777777;
   }
 }
 
 body {
-  padding: 3.5em 1em;
+  padding: 5em 3em;
   font-family: Inter, Helvetica, Roboto, sans-serif;
-  font-size: 1rem;
+  font-size: 1.05rem;
   color: var(--f);
   background-color: var(--b);
   max-width: 650px;
   margin: 0 auto;
-  line-height: 2em;
+  line-height: 1.5em;
 }
 
 h2 {
@@ -75,7 +75,7 @@ a:hover {
 
 @media only screen and (max-width: 700px) {
   .date { display: none; }
-  body { padding: 3.5em 2em; }
+  body { padding: 5em 3em; }
 }
 
 
