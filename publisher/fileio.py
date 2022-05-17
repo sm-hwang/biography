@@ -1,9 +1,9 @@
 import os
 
 
-RUNIC_DIRECTORY = "../pages"
+RUNIC_DIRECTORY = "pages"
 FILETYPE = ".runic"
-PAGES_DIRECTORY = "../public"
+PAGES_DIRECTORY = "public"
 
 
 def isRunic(fn):

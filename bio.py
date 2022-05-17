@@ -13,7 +13,7 @@ PUBLISH = 'pub'
 BURN = 'burn'
 PRINT = 'print'
 
-DIR_TO_BURN = '../public'
+DIR_TO_BURN = 'public/'
 
 def main():
 

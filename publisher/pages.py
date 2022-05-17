@@ -104,8 +104,10 @@ def processParagraph(b):
 
 def parseBlock(rune, block):
 
-    block = block.replace('\n', ' ').strip()
     text = ''
+    if rune != "!": 
+        block = block.replace('\n', ' ').strip()
+
     if rune == "&":
         text = PARAGRAPH.format(processParagraph(block))
     elif rune == ">":
@@ -131,9 +133,6 @@ def runicToPages(runics):
             first, other = pc.split(DELIM, 1)
             meta = readMeta(first)
             pages.append((pn, htmlify(pn, meta, other), meta))
-            # print("printing page")
-            # print(pn)
-            # print(htmlify(pn, meta, other))
         except json.decoder.JSONDecodeError: 
             print(f'Failed to read meta-data of {pn}{FILETYPE}')
         except ValueError as ve:

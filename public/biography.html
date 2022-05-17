@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="smh">
+  <title>biography</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="16x16.ico" type"image/ico" sizes="16x16">
+  <link rel="icon" href="32x32.ico" type"image/ico" sizes="16x16">
+</head>
+<body>
+  <main>
+<p><a href="https://github.com/sm-hwang/biography">Biography</a> is the static site generator for this site. I plan on posting my life's work here; I plan on my site becoming  something akin to a biography.</p>
+<p>Biography parses a custom templating format based on  <a href="https://wiki.xxiivv.com/site/runic.html">runic</a>:</p>
+<pre><code> ! code block
+> blockquote
+# header
+% comment
+& paragraph
+| image
+& paragraph
+& `inline code`
+& [text][link]</code></pre>
+<p>Runic files are stored in the <code>page</code> directory. To parse all <code>.runic</code> files to  <code>html</code>, run</p>
+<pre><code> python3 bio.py print</code></pre>
+<p>only parses the given files.</p>
+<p>To clear all current <code>.html</code> files, run</p>
+<pre><code> python3 bio.py burn</code></pre>
+  </main>
+</body>
+</html>
