@@ -12,15 +12,15 @@
   --m: #777777;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --b: #ffffff;
-    --f: #161616;
-    --a: #007fff;
-    --h: #78b1f3; /* hover */
-    --m: #777777;
-  }
-}
+/* @media (prefers-color-scheme: dark) { */
+/*   :root { */
+/*     --b: #ffffff; */
+/*     --f: #161616; */
+/*     --a: #007fff; */
+/*     --h: #78b1f3; /1* hover *1/ */
+/*     --m: #777777; */
+/*   } */
+/* } */
 
 body {
   padding: 10rem 3rem;
@@ -41,7 +41,8 @@ h2 {
 }
 
 blockquote {
-  border-left: 0.4em solid var(--f);
+  color: var(--m);
+  border-left: 0.4em solid var(--m);
   padding-left: 1em;
   margin-bottom: 1.3em;
 }
