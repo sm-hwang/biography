@@ -103,8 +103,20 @@ p {
   margin-bottom: 1.3em;
 }
 
-picture img {
-  vertical-align: middle;
-  width: 100%;
-  margin-bottom: 2em;
+picture { 
+  /* margin-bottom: 2em; */ 
+  /* border: 1px solid var(--m); */
 }
+
+picture img {
+  width: 100%;
+  object-fit: contain;
+  height: 200px;
+  margin-bottom: 2em; 
+  border: 1px solid var(--m);
+}
+
+/* .center { */
+/*   display: flex; */
+/*   justify-content: center; */
+/* } */

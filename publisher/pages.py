@@ -12,7 +12,7 @@ TYPE = 'type'
 DESC = 'description'
 KEYS = [TITLE, START, TYPE, DESC]
         
-# Do <meta name="description" content="">
+# TODO: <meta name="description" content="">
 HTML = """
 <!DOCTYPE html>
 <html lang="en">
@@ -33,7 +33,7 @@ HTML = """
 </html>
 """
 
-IMAGE = '<picture><img src={src}></picture>'
+IMAGE = '<div class="center"><picture><img style="background-color:{bg};" src={src}></picture></div>'
 
 HEADER = '<h2>{}</h2>'
 
@@ -107,7 +107,6 @@ def parseBlock(rune, block):
     text = ''
     if rune != "!": 
         block = block.replace('\n', ' ').strip()
-
     if rune == "&":
         text = PARAGRAPH.format(processParagraph(block))
     elif rune == ">":
@@ -117,7 +116,9 @@ def parseBlock(rune, block):
     elif rune == "!":
         text = BLOCK_CODE.format(block)
     elif rune == "|":
-        text = IMAGE.format(src=f'images/{block}')
+        src, bg = block.split('|')
+        # print("'" + bg + "'", "'" + src + "'")
+        text = IMAGE.format(bg=bg, src=f'images/{src}')
     elif rune == "%":
         pass
     else:  
