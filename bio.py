@@ -34,5 +34,5 @@ def main():
                 print(f'Could not burn {file}')
         
 
-
-main()
+if __name__ == "__main__":
+    main()
