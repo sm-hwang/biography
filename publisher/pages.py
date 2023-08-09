@@ -47,11 +47,25 @@ CODE = '<code>{}</code>'
 
 LINK = '<a href="{link}">{text}</a>'
 
-ESSAY = '<li><a href="{link}">{title}</a><span class="date">{date}</span></li>'
+ESSAY = '<li class="chapter"><a href="{link}">{title}</a><span class="date">{date}</span></li>'
 
 PROJECT = '''
-<li><span><a href="{link}">{title}</a><span class="description">{desc}</span></span><span class="date">{date}</span></li>
+<li class="chapter"><span><a href="{link}">{title}</a><span class="description">{desc}</span></span><span class="date">{date}</span></li>
 '''
+
+OL = '''
+<ol>
+    {elements}
+</ol>
+'''
+
+UL = '''
+<ul>
+    {elements}
+</ul>
+'''
+
+LI = '<li>{}</li>'
 
 def validateMeta(meta):
     notin = []
@@ -105,7 +119,7 @@ def processParagraph(b):
 def parseBlock(rune, block):
 
     text = ''
-    if rune != "!": 
+    if rune not in  {"1", "!"}: 
         block = block.replace('\n', ' ').strip()
     if rune == "&":
         text = PARAGRAPH.format(processParagraph(block))
@@ -119,6 +133,11 @@ def parseBlock(rune, block):
         src, bg = block.split('|')
         # print("'" + bg + "'", "'" + src + "'")
         text = IMAGE.format(bg=bg, src=f'images/{src}')
+    elif rune == "1" or rune == "*": 
+        listElement = OL if rune == "1" else UL
+        text = listElement.format(
+            elements="\n".join(LI.format(x) for x in block.split("\n"))
+        )
     elif rune == "%":
         pass
     else:  
@@ -158,9 +177,9 @@ def htmlify(pn, meta, pc):
     return HTML.format(title= pn, content= '\n'.join(content))
 
 HOME_TITLE = 'smh'
-UL = '''
-<ul>
-{elements}    
+UL_HOME = '''
+<ul class="cover">
+    {elements}    
 </ul>
 '''
 
@@ -188,7 +207,7 @@ def home(pages):
                     link= f"{name}.html",
                     title=meta[TITLE])
         toc.append(element)
-    home = UL.format(elements='\n'.join(toc))
+    home = UL_HOME.format(elements='\n'.join(toc))
 
     return HTML.format(title= HOME_TITLE, content= home)
 

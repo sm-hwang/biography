@@ -10,6 +10,7 @@
   --a: #007fff;
   --h: #78b1f3; /* hover */
   --m: #777777;
+  --l: rgba(121, 121, 121, 0.75);
 }
 
 /* @media (prefers-color-scheme: dark) { */
@@ -47,11 +48,12 @@ blockquote {
   margin-bottom: 1.3em;
 }
 
-ul {
-  list-style-type: none;
+ul.cover {
+  list-style: none;
+  margin: 0;
 }
 
-li {
+li.chapter {
   display: flex;
   justify-content: space-between;
   line-height: 1.5em;
@@ -116,7 +118,11 @@ picture img {
   border: 1px solid var(--m);
 }
 
-/* .center { */
-/*   display: flex; */
-/*   justify-content: center; */
-/* } */
+ol li::marker, ul li::marker {
+  color: var(--l);
+}
+
+ul, ol {
+  margin-bottom: 1.3em;
+  margin-left: 1em;
+}
