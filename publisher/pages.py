@@ -35,7 +35,7 @@ HTML = """
 
 IMAGE = '<div class="center"><picture><img style="background-color:{bg};" src={src}></picture></div>'
 
-HEADER = '<h2>{}</h2>'
+HEADER = '<h3>{}</h3>'
 
 BLOCKQUOTE = '<blockquote><p>{}</p></blockquote>'
 
