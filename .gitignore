@@ -10,3 +10,4 @@ public/gallery/
 image_source/
 __pycache__/
 *.icloud
+tests/

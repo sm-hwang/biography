@@ -1,38 +1,65 @@
+#!/usr/bin/env python3
 # TODO: need to eventually remove json dependency
-# TODO: CHANGE SO NO GLOBAL VARS
-# TODO: Escape all reserved chars e.g. >, <, &, "
 
 import sys, os
-from publisher.pages import printBio
+from prepress import print_biography, DRAFT_DIR, DRAFT_EXT
 
 # bio print 
 # bio burn
 # bio pub
 
-PUBLISH = 'pub'
-BURN = 'burn'
-PRINT = 'print'
+# Command constants
+CMD_PUBLISH = 'pub'
+CMD_BURN = 'burn'
+CMD_PRINT = 'print'
 
-DIR_TO_BURN = 'public/'
+# Directory constants
+BURN_DIR = "public"
+PRESERVED_FILES = {'404.html'}  # Files that should not be deleted
 
 def main():
 
     if len(sys.argv) < 2:
+        print("Usage: bio <command> [args...]")
         return
 
-    _, inst, *pages = sys.argv
-    if inst == PRINT:
-        printBio(pages)
+    _, command = sys.argv
+    if command == CMD_PRINT:
+        # Get all .md files in the content directory
+        page_names = [p[:-len(DRAFT_EXT)] for p in os.listdir(DRAFT_DIR)
+                    if p.endswith(DRAFT_EXT)]
+
+        print_biography(page_names)
         print("Finished printing pages!")
-    elif inst == BURN:
-        files = os.listdir(DIR_TO_BURN)
-        for file in filter(lambda x: x.endswith('.html') and x != '404.html', files):
-            try: 
-                path = os.path.join(DIR_TO_BURN, file)
-                os.remove(path)
-            except OSError:
-                print(f'Could not burn {file}')
+    elif command == CMD_BURN:
+        # Get all HTML files except preserved ones
+        html_files = [f for f in os.listdir(BURN_DIR)
+                     if f.endswith('.html') and f not in PRESERVED_FILES]
+
+        if not html_files:
+            print("No HTML files to burn")
+            return
+
+        # Show files to be deleted and ask for confirmation
+        print(f"Found {len(html_files)} HTML files to burn:")
+        for filename in html_files:
+            print(f"  - {filename}")
+
+        confirm = input("\nAre you sure you want to burn these files? [y/N] ").lower()
+        if confirm != 'y':
+            print("Burn cancelled")
+            return
+
+        # Delete the files
+        for filename in html_files:
+            try:
+                file_path = os.path.join(BURN_DIR, filename)
+                os.remove(file_path)
+                print(f"Burned {filename}")
+            except OSError as e:
+                print(f"Could not burn {filename}: {e}")
         
+        print(f"Finished burning {len(html_files)} files")
 
 if __name__ == "__main__":
     main()
